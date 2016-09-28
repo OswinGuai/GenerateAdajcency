@@ -24,15 +24,17 @@ def parse_args():
 
     return parser.parse_args()
 
-def get_adj_vec_num_str(i):
-	node = nodes[i]
+def get_adj_vec_num_str(n_i, l_i):
+	node = nodes[n_i]
 	indexs = (edges[:,0] == node)
 	neighbors = edges[indexs,1]
 	num = 0
 	for neighbor in neighbors:
 		num = num + pow_value[alias[neighbor]]
+
+	lines_proxy[l_i][:] = empty_line
 	line = '%d %s\n' % (node,num)
-	lines_proxy[i][0:len(line)] = line
+	lines_proxy[l_i][0:len(line)] = line
 	return 0
 
 def get_adj_vec_num_str_undirected(n_i, l_i):
@@ -45,12 +47,13 @@ def get_adj_vec_num_str_undirected(n_i, l_i):
 	num = 0
 	for neighbor in neighbors:
 		num = num + pow_value[alias[neighbor]]
+	lines_proxy[l_i][:] = empty_line
 	line = '%d %s\n' % (node,num)
 	lines_proxy[l_i][0:len(line)] = line
 	return 0
 
 
-def initProcessForVec(ori_nodes, ori_edges, ori_size, ori_length, lines):
+def initProcessForVec(ori_nodes, ori_edges, ori_size, ori_length, lines, line_len):
 	global nodes
 	global edges
 	global alias
@@ -59,6 +62,8 @@ def initProcessForVec(ori_nodes, ori_edges, ori_size, ori_length, lines):
 	global length
 	global pow_value
 	global lines_proxy
+	global empty_line
+	empty_line = ['\x00' for i in range(line_len)]
 	lines_proxy = lines
 	nodes = np.array(ori_nodes)
 	edges = np.array(ori_edges).reshape([ori_length, 2])
@@ -90,8 +95,7 @@ def parse_to_adj_with_decimal(args):
 	shared_nodes = mp.Array('d',size)
 	nodes_buffer = np.frombuffer(shared_nodes.get_obj())
 	nodes_buffer[...] = nodes
-	
-	# Memory Not enough, have to put lines into parts.
+
 	part_num = 5
 	if size < 10000:
 		part_num = 1
@@ -102,7 +106,7 @@ def parse_to_adj_with_decimal(args):
 	start = time.time()
 	print "Init Adjacency Vectors processes ..."
 	sys.stdout.flush()
-	pool = mp.Pool(processes=20, initializer=initProcessForVec, initargs=(shared_nodes, shared_edges, size, length, lines))#, countor, rate))
+	pool = mp.Pool(processes=20, initializer=initProcessForVec, initargs=(shared_nodes, shared_edges, size, length, lines, line_len))
 	print "Init complete by %s secs." % (time.time() - start)
 	sys.stdout.flush()
 	print "The whole process is splitted into %d parts." % part_num
@@ -115,15 +119,7 @@ def parse_to_adj_with_decimal(args):
 		start_index = p_i*part_len
 		end_index = min(start_index + part_len, size)
 		curr_len = end_index - start_index
-		if p_i != 0:
-			start = time.time()
-			print "Clean lines ..."
-			sys.stdout.flush()
-			for line in lines[:curr_len]:
-				line[:] = ['\x00' for i in range(line_len)]
-			print "Clean complete by %s secs." % (time.time() - start)
-			sys.stdout.flush()
-			
+
 		vec_result = []
 		if args.undirected:
 			for i in range(curr_len):
@@ -135,13 +131,13 @@ def parse_to_adj_with_decimal(args):
 				vec_result.append(task) 
 	
 		count = 0
-		bound = curr_len / float(100000)
+		bound = curr_len / float(10000)
 		print "Begin calculate adjacency ... "
 		sys.stdout.flush()
 		start = time.time()
 		for n_i in range(curr_len):
 			if n_i >= count * bound:
-				sys.stdout.write("Process reach %.2f%%	\r" % (count/float(1000)))
+				sys.stdout.write("Process reach %.2f%%	\r" % (count/float(100)))
 				sys.stdout.flush()
 				count = count + 1
 			vec_result[n_i].get()
