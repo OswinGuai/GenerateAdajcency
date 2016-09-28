@@ -9,13 +9,6 @@ import time
 import math
 import string
 
-global nodes
-global edges
-global alias
-global length
-global size
-global pow_value
-
 def parse_args():
     '''
     Parses arguments.
