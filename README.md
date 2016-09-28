@@ -10,9 +10,13 @@ I found it hard to generate adjacency matrix for a large graph. When I try to ma
 A script with some clear tips in code.
 
 **Input**: edges of a graph in a file. Like
+
 1 2
+
 2 5
+
 ...
+
 23432 23222
 
 **Output**: adjacency number, which is sum of pow(2,x), where x is the index of connected node.
