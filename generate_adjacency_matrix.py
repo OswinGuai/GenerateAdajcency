@@ -32,9 +32,10 @@ def get_adj_vec_num_str(n_i, l_i):
 	for neighbor in neighbors:
 		num = num + pow_value[alias[neighbor]]
 
-	lines_proxy[l_i][:] = empty_line
 	line = '%d %s\n' % (node,num)
-	lines_proxy[l_i][0:len(line)] = line
+	line_length = len(line)
+	lines_lens[l_i] = line_length
+	lines_proxy[l_i][0:line_length] = line
 	return 0
 
 def get_adj_vec_num_str_undirected(n_i, l_i):
@@ -47,13 +48,14 @@ def get_adj_vec_num_str_undirected(n_i, l_i):
 	num = 0
 	for neighbor in neighbors:
 		num = num + pow_value[alias[neighbor]]
-	lines_proxy[l_i][:] = empty_line
 	line = '%d %s\n' % (node,num)
-	lines_proxy[l_i][0:len(line)] = line
+	line_length = len(line)
+	lines_lens[l_i] = line_length
+	lines_proxy[l_i][0:line_length] = line
 	return 0
 
 
-def initProcessForVec(ori_nodes, ori_edges, ori_size, ori_length, lines, line_len):
+def initProcessForVec(ori_nodes, ori_edges, ori_size, ori_length, lines, lines_lengths):
 	global nodes
 	global edges
 	global alias
@@ -63,7 +65,8 @@ def initProcessForVec(ori_nodes, ori_edges, ori_size, ori_length, lines, line_le
 	global pow_value
 	global lines_proxy
 	global empty_line
-	empty_line = ['\x00' for i in range(line_len)]
+	global lines_lens
+	lines_lens = lines_lengths
 	lines_proxy = lines
 	nodes = np.array(ori_nodes)
 	edges = np.array(ori_edges).reshape([ori_length, 2])
@@ -103,10 +106,12 @@ def parse_to_adj_with_decimal(args):
 	line_len = size/3 + 1 + len(str(size))
 	lines = [mp.Array('c', line_len) for i in range(part_len)]
 
+	lines_lengths = mp.Array('d', part_len)
+
 	start = time.time()
 	print "Init Adjacency Vectors processes ..."
 	sys.stdout.flush()
-	pool = mp.Pool(processes=20, initializer=initProcessForVec, initargs=(shared_nodes, shared_edges, size, length, lines, line_len))
+	pool = mp.Pool(processes=20, initializer=initProcessForVec, initargs=(shared_nodes, shared_edges, size, length, lines, lines_lengths))
 	print "Init complete by %s secs." % (time.time() - start)
 	sys.stdout.flush()
 	print "The whole process is splitted into %d parts." % part_num
@@ -148,8 +153,8 @@ def parse_to_adj_with_decimal(args):
 		sys.stdout.flush()
 		start = time.time()
 		part_lines = []
-		for n_i in range(curr_len):
-			part_lines.append(''.join(x for x in lines[n_i][:] if x != '\x00'))
+		for l_i in range(curr_len):
+			part_lines.append(''.join(x for x in lines[l_i][:int(lines_lengths[l_i])]))
 		print "Parsing finish by %s secs." % (time.time() - start)
 		sys.stdout.flush()
 	
