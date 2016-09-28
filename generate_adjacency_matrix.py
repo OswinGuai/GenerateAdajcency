@@ -90,7 +90,8 @@ def parse_to_adj_with_decimal(args):
 	shared_nodes = mp.Array('d',size)
 	nodes_buffer = np.frombuffer(shared_nodes.get_obj())
 	nodes_buffer[...] = nodes
-
+	
+	# Memory Not enough, have to put lines into parts.
 	part_num = 5
 	if size < 10000:
 		part_num = 1
