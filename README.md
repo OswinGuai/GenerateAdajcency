@@ -35,7 +35,7 @@ The indices of nodes 1, 2, 3 are 0, 1, 2.
 
 Then the adjacency number of 1 is "pow(2,1) + pow(2,2) = 5".
 
-**Why Ajacency Number?**
+**Why Adjacency Number?**
 
 The file for 0/1 adjacency relationship is really huge, which can be more than tens of Gb. But in decimal pattern, the file can be less than half size.
 
