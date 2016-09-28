@@ -109,21 +109,20 @@ def parse_to_adj_with_decimal(args):
 
 	node_index = 0
 	for p_i in range(part_num):
-		if p_i != 0:
-			start = time.time()
-			print "Clean lines ..."
-			sys.stdout.flush()
-			for line in lines:
-				line[:] = ['\x00' for i in range(line_len)]
-			print "Clean complete by %s secs." % (time.time() - start)
-			sys.stdout.flush()
-
 		print "The %d process begins ..." % (p_i + 1)
 		sys.stdout.flush()
 		start_index = p_i*part_len
 		end_index = min(start_index + part_len, size)
 		curr_len = end_index - start_index
-	
+		if p_i != 0:
+			start = time.time()
+			print "Clean lines ..."
+			sys.stdout.flush()
+			for line in lines[:curr_len]:
+				line[:] = ['\x00' for i in range(line_len)]
+			print "Clean complete by %s secs." % (time.time() - start)
+			sys.stdout.flush()
+			
 		vec_result = []
 		if args.undirected:
 			for i in range(curr_len):
