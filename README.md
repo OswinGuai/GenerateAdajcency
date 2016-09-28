@@ -9,7 +9,7 @@ I found it hard to generate adjacency matrix for a large graph. When I try to ma
 
 **Good?**
 
-For input of graph with more than 300,000 nodes, this code could finish generating adjacency by cost within 90 minites, whereas my original code needs about 40+ hours to finish. And of cource, I run this on high-efficiency server.
+For input of graph with more than 300,000 nodes, this code could finish generating adjacency by cost within 40 minites, whereas my original code needs about 40+ hours to finish. And of cource, I run this on high-efficiency server.
 
 I use 20 processes and about 150Gb memory. And get adjacency file of 10Gb.
 
