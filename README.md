@@ -1,9 +1,13 @@
-# GenerateAdajcency
+# GenerateAdjacency
 generate adjacency for given graph
 
 **Why this?**
 
 I found it hard to generate adjacency matrix for a large graph. When I try to make it, there comes a lot of problems such as Time Cost, Space Cost and File Too Large. After working of 4 or 5 days, there comes this job.
+
+**Good?**
+
+For input of graph with more than 300,000 nodes, this code could finish generating adjacency by cost of almost ****, whereas my original code needs about 40+ hours to finish.
 
 **What this?**
 
