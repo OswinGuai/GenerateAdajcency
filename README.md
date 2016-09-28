@@ -1,5 +1,5 @@
 # GenerateAdjacency
-generate adjacency for given graph
+_Generate adjacency for given graph._
 
 **Why this?**
 
