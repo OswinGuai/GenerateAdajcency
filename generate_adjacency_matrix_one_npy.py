@@ -155,7 +155,7 @@ def parse_to_adj_with_decimal(args):
 		for l_i in range(curr_len):
 			pair_for_adj = []
 			pair_for_adj.append(nodes[node_index + l_i]) 
-			pair_for_adj.append(int(lines[l_i][:int(lines_lengths[l_i])]))
+			pair_for_adj.append(lines[l_i][:int(lines_lengths[l_i])])
 			final_adj_decimal.append(pair_for_adj)
 		print "Parsing finish by %s secs." % (time.time() - start)
 		sys.stdout.flush()
